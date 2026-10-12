@@ -382,10 +382,10 @@ function App() {
       <header className="navigation">
         <a
           href="#home"
-          className="monogram"
+          className="monogram name-logo"
           aria-label="Samad Khan, back to top"
         >
-          S<span>/</span>K<span>.</span>
+          Samad Khan<span>.</span>
         </a>
         <nav aria-label="Main navigation">
           {nav.map((item) => (
@@ -792,8 +792,8 @@ function App() {
         </section>
       </main>
       <footer>
-        <a href="#home" className="monogram" aria-label="Back to top">
-          S<span>/</span>K.
+        <a href="#home" className="monogram name-logo" aria-label="Samad Khan, back to top">
+          Samad Khan<span>.</span>
         </a>
         <span>© 2026 SAMAD A. KHAN</span>
         <span>DESIGNED WITH INTENTION. ENGINEERED WITH PRECISION.</span>
