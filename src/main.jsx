@@ -327,10 +327,6 @@ function App() {
       return;
     }
 
-    form.elements.namedItem("name").value = name;
-    form.elements.namedItem("email").value = address;
-    form.elements.namedItem("message").value = message;
-
     if (!serviceId || !templateId || !publicKey) {
       setContactStatus({
         state: "error",
@@ -341,7 +337,18 @@ function App() {
 
     setContactStatus({ state: "sending", message: "Sending your message…" });
     try {
-      await emailjs.sendForm(serviceId, templateId, form, { publicKey });
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          name,
+          email: address,
+          message,
+          subject: `New portfolio enquiry from ${name}`,
+          to_name: "Samad A. Khan",
+        },
+        { publicKey },
+      );
       form.reset();
       setContactStatus({
         state: "success",
