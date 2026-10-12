@@ -14,6 +14,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import emailjs from "@emailjs/browser";
 import { Button } from "./components/ui/button";
 import {
   Dialog,
@@ -303,8 +304,40 @@ function App() {
   const [menu, setMenu] = useState(false),
     [active, setActive] = useState(""),
     [selected, setSelected] = useState(null),
-    [skill, setSkill] = useState(0);
+    [skill, setSkill] = useState(0),
+    [contactOpen, setContactOpen] = useState(false),
+    [contactStatus, setContactStatus] = useState({ state: "idle", message: "" });
   const root = useRef();
+  const handleContactSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setContactStatus({
+        state: "error",
+        message: "Email service is not configured yet. Please use the email link below.",
+      });
+      return;
+    }
+
+    setContactStatus({ state: "sending", message: "Sending your message…" });
+    try {
+      await emailjs.sendForm(serviceId, templateId, form, { publicKey });
+      form.reset();
+      setContactStatus({
+        state: "success",
+        message: "Message sent successfully. I’ll get back to you soon.",
+      });
+    } catch {
+      setContactStatus({
+        state: "error",
+        message: "Message could not be sent. Please try again or email me directly.",
+      });
+    }
+  };
   useEffect(() => {
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let lenis, tick;
@@ -775,10 +808,10 @@ function App() {
               <br />
               <span>IT REAL.</span>
             </h3>
-            <a href={email} className="contact-orb">
+            <button type="button" onClick={() => setContactOpen(true)} className="contact-orb" aria-haspopup="dialog">
               LET’S TALK
               <ArrowUpRight size={38} />
-            </a>
+            </button>
             <div className="contact-email">
               <span className="eyebrow">DROP ME A LINE</span>
               <a href={email}>
@@ -801,6 +834,32 @@ function App() {
           BACK TO TOP <ArrowUp size={15} />
         </a>
       </footer>
+      <Dialog open={contactOpen} onOpenChange={(open) => {
+        setContactOpen(open);
+        if (!open) setContactStatus({ state: "idle", message: "" });
+      }}>
+        <DialogContent className="glass-contact" overlayClassName="glass-contact-overlay" closeLabel="Close contact dialog">
+          <Label>LET’S BUILD SOMETHING TOGETHER</Label>
+          <DialogTitle className="contact-dialog-title">A conversation.<br />A new possibility<span>.</span></DialogTitle>
+          <DialogDescription className="contact-dialog-description">Have a project in mind or an opportunity to share? Tell me a little about it.</DialogDescription>
+          <form className="contact-form" onSubmit={handleContactSubmit}>
+            <input type="hidden" name="to_name" value="Samad A. Khan" />
+            <input type="hidden" name="subject" value="New portfolio enquiry" />
+            <div className="contact-form-row">
+              <label htmlFor="contact-name">YOUR NAME<input id="contact-name" name="from_name" autoComplete="name" placeholder="What should I call you?" required maxLength={100} /></label>
+              <label htmlFor="contact-address">EMAIL ADDRESS<input id="contact-address" name="reply_to" type="email" autoComplete="email" placeholder="you@company.com" required maxLength={254} /></label>
+            </div>
+            <label htmlFor="contact-message">WHAT ARE YOU THINKING?<textarea id="contact-message" name="message" placeholder="A project, an idea, or just a hello…" rows={4} required maxLength={4000} /></label>
+            <Button type="submit" className="contact-submit" disabled={contactStatus.state === "sending"}>
+              {contactStatus.state === "sending" ? "SENDING…" : "SEND MESSAGE"} <ArrowUpRight size={18} />
+            </Button>
+            <p className={`contact-form-note ${contactStatus.state}`} role="status" aria-live="polite">
+              {contactStatus.message || "Your message will be delivered directly to my inbox."}
+            </p>
+          </form>
+          <a className="contact-direct" href={email}>Samadkhan040204@gmail.com <ArrowUpRight size={14} /></a>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={!!selected}
         onOpenChange={(open) => {
