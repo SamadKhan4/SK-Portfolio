@@ -24,4 +24,4 @@ Supports reduced motion, a WebGL failure fallback, keyboard focus, and Escape di
 
 ## EmailJS setup
 
-Copy `.env.example` to `.env` and add the EmailJS service ID, template ID, and public key. The template should use `{{from_name}}`, `{{reply_to}}`, `{{message}}`, `{{subject}}`, and `{{to_name}}`. Restart Vite after changing environment variables.
+Copy `.env.example` to `.env` and add `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, and `EMAILJS_PUBLIC_KEY`. The template should use `{{from_name}}`, `{{reply_to}}`, `{{message}}`, `{{subject}}`, and `{{to_name}}`. Restart the development server after changing environment variables.

@@ -311,9 +311,9 @@ function App() {
   const handleContactSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    const serviceId = globalThis.__EMAILJS_SERVICE_ID__;
+    const templateId = globalThis.__EMAILJS_TEMPLATE_ID__;
+    const publicKey = globalThis.__EMAILJS_PUBLIC_KEY__;
 
     if (!serviceId || !templateId || !publicKey) {
       setContactStatus({
