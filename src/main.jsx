@@ -311,9 +311,25 @@ function App() {
   const handleContactSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get("name") || "").trim();
+    const address = String(formData.get("email") || "").trim();
+    const message = String(formData.get("message") || "").trim();
     const serviceId = globalThis.__EMAILJS_SERVICE_ID__;
     const templateId = globalThis.__EMAILJS_TEMPLATE_ID__;
     const publicKey = globalThis.__EMAILJS_PUBLIC_KEY__;
+
+    if (!name || !address || !message) {
+      setContactStatus({
+        state: "error",
+        message: "Please enter your name, email, and message before sending.",
+      });
+      return;
+    }
+
+    form.elements.namedItem("name").value = name;
+    form.elements.namedItem("email").value = address;
+    form.elements.namedItem("message").value = message;
 
     if (!serviceId || !templateId || !publicKey) {
       setContactStatus({
@@ -846,8 +862,8 @@ function App() {
             <input type="hidden" name="to_name" value="Samad A. Khan" />
             <input type="hidden" name="subject" value="New portfolio enquiry" />
             <div className="contact-form-row">
-              <label htmlFor="contact-name">YOUR NAME<input id="contact-name" name="from_name" autoComplete="name" placeholder="What should I call you?" required maxLength={100} /></label>
-              <label htmlFor="contact-address">EMAIL ADDRESS<input id="contact-address" name="reply_to" type="email" autoComplete="email" placeholder="you@company.com" required maxLength={254} /></label>
+              <label htmlFor="contact-name">YOUR NAME<input id="contact-name" name="name" autoComplete="name" placeholder="What should I call you?" required maxLength={100} /></label>
+              <label htmlFor="contact-address">EMAIL ADDRESS<input id="contact-address" name="email" type="email" autoComplete="email" placeholder="you@company.com" required maxLength={254} /></label>
             </div>
             <label htmlFor="contact-message">WHAT ARE YOU THINKING?<textarea id="contact-message" name="message" placeholder="A project, an idea, or just a hello…" rows={4} required maxLength={4000} /></label>
             <Button type="submit" className="contact-submit" disabled={contactStatus.state === "sending"}>
